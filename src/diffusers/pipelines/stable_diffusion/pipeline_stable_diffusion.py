@@ -81,8 +81,8 @@ class StableDiffusionPipeline(DiffusionPipeline):
             EulerAncestralDiscreteScheduler,
             DPMSolverMultistepScheduler,
         ],
-        safety_checker: StableDiffusionSafetyChecker,
-        feature_extractor: CLIPFeatureExtractor,
+        safety_checker: StableDiffusionSafetyChecker=None,
+        feature_extractor: CLIPFeatureExtractor=None,
     ):
         super().__init__()
 
@@ -129,8 +129,8 @@ class StableDiffusionPipeline(DiffusionPipeline):
             tokenizer=tokenizer,
             unet=unet,
             scheduler=scheduler,
-            safety_checker=safety_checker,
-            feature_extractor=feature_extractor,
+            #safety_checker=safety_checker,
+            #feature_extractor=feature_extractor,
         )
 
     def enable_xformers_memory_efficient_attention(self):
@@ -520,7 +520,7 @@ class StableDiffusionPipeline(DiffusionPipeline):
         image = self.decode_latents(latents)
 
         # 9. Run safety checker
-        image, has_nsfw_concept = self.run_safety_checker(image, device, text_embeddings.dtype)
+        image, has_nsfw_concept = image, False
 
         # 10. Convert to PIL
         if output_type == "pil":
