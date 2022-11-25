@@ -445,11 +445,7 @@ class ConfigMixin:
 
         # 4. Give nice warning if unexpected values have been passed
         if len(config_dict) > 0:
-            logger.warning(
-                f"The config attributes {config_dict} were passed to {cls.__name__}, "
-                "but are not expected and will be ignored. Please verify your "
-                f"{cls.config_name} configuration file."
-            )
+            logger.warning("")
 
         # 5. Give nice info if config attributes are initiliazed to default because they have not been passed
         passed_keys = set(init_dict.keys())
