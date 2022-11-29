@@ -528,9 +528,6 @@ class DiffusionPipeline(ConfigMixin):
 
         init_dict, unused_kwargs, _ = pipeline_class.extract_init_dict(config_dict, **kwargs)
 
-        if len(unused_kwargs) > 0:
-            logger.warning(f"Keyword arguments {unused_kwargs} not recognized.")
-
         init_kwargs = {}
 
         # import it here to avoid circular import
