@@ -113,9 +113,6 @@ class StableDiffusionPipeline(DiffusionPipeline):
             new_config["clip_sample"] = False
             scheduler._internal_dict = FrozenDict(new_config)
 
-        if safety_checker is None:
-            logger.warning("")
-
         self.register_modules(
             vae=vae,
             text_encoder=text_encoder,
