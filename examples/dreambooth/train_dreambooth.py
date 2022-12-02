@@ -729,7 +729,7 @@ def main():
                      os.mkdir(save_dir)
                   inst=save_dir[16:]
                   inst=inst.replace(" ", "_")
-                  print(" [1;32mSAVING CHECKPOINT: "+args.Session_dir+"/"+inst+".ckpt")
+                  print(" [1;32mSAVING CHECKPOINT...")
                   # Create the pipeline using the trained modules and save it.
                   if accelerator.is_main_process:
                      pipeline = StableDiffusionPipeline.from_pretrained(
@@ -743,8 +743,14 @@ def main():
                         subprocess.call('rm -r '+save_dir+'/text_encoder/*.*', shell=True)
                         subprocess.call('cp -f '+frz_dir +'/*.* '+ save_dir+'/text_encoder', shell=True)                     
                      chkpth=args.Session_dir+"/"+inst+".ckpt"
-                     subprocess.call('python /content/diffusers/scripts/convert_diffusers_to_original_stable_diffusion.py --model_path ' + save_dir + ' --checkpoint_path ' + chkpth + ' --half', shell=True)
-                     subprocess.call('rm -r '+ save_dir, shell=True)
+                     if args.mixed_precision=="fp16":
+                        subprocess.call('python /content/diffusers/scripts/convert_diffusers_to_original_stable_diffusion.py --model_path ' + save_dir + ' --checkpoint_path ' + chkpth + ' --half', shell=True)
+                     else:
+                        subprocess.call('python /content/diffusers/scripts/convert_diffusers_to_original_stable_diffusion.py --model_path ' + save_dir + ' --checkpoint_path ' + chkpth, shell=True)
+                     if os.path.getsize(args.pretrained_model_name_or_path+"/text_encoder/pytorch_model.bin") > 670901463:
+                        subprocess.call('mv '+save_dir+' '+args.Session_dir,shell=True)
+                     else:
+                        subprocess.call('rm -r '+ save_dir, shell=True)
                      i=i+args.save_n_steps
             
         accelerator.wait_for_everyone()
