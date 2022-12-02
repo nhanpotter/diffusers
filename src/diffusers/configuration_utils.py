@@ -443,21 +443,18 @@ class ConfigMixin:
                 # use value from config dict
                 init_dict[key] = config_dict.pop(key)
 
-        # 4. Give nice warning if unexpected values have been passed
-        if len(config_dict) > 0:
-            logger.warning("")
 
-        # 5. Give nice info if config attributes are initiliazed to default because they have not been passed
+        # 4. Give nice info if config attributes are initiliazed to default because they have not been passed
         passed_keys = set(init_dict.keys())
         if len(expected_keys - passed_keys) > 0:
             logger.info(
                 f"{expected_keys - passed_keys} was not found in config. Values will be initialized to default values."
             )
 
-        # 6. Define unused keyword arguments
+        # 5. Define unused keyword arguments
         unused_kwargs = {**config_dict, **kwargs}
 
-        # 7. Define "hidden" config parameters that were saved for compatible classes
+        # 6. Define "hidden" config parameters that were saved for compatible classes
         hidden_config_dict = {k: v for k, v in original_dict.items() if k not in init_dict and not k.startswith("_")}
 
         return init_dict, unused_kwargs, hidden_config_dict
