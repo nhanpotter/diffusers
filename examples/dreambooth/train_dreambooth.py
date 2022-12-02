@@ -748,7 +748,7 @@ def main():
                      else:
                         subprocess.call('python /content/diffusers/scripts/convert_diffusers_to_original_stable_diffusion.py --model_path ' + save_dir + ' --checkpoint_path ' + chkpth, shell=True)
                      if os.path.getsize(args.pretrained_model_name_or_path+"/text_encoder/pytorch_model.bin") > 670901463:
-                        subprocess.call('mv '+save_dir+' '+args.Session_dir,shell=True)
+                        subprocess.Popen('mv '+save_dir+' '+args.Session_dir,shell=True)
                      else:
                         subprocess.call('rm -r '+ save_dir, shell=True)
                      i=i+args.save_n_steps
@@ -776,7 +776,8 @@ def main():
         )
         pipeline.save_pretrained(args.output_dir)
         txt_dir=args.output_dir + "/text_encoder_trained"
-        subprocess.call('rm -r '+txt_dir, shell=True)
+        if os.path.exists(txt_dir):
+           subprocess.call('rm -r '+txt_dir, shell=True)
      
       else:
         pipeline = StableDiffusionPipeline.from_pretrained(
