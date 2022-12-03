@@ -747,10 +747,7 @@ def main():
                         subprocess.call('python /content/diffusers/scripts/convert_diffusers_to_original_stable_diffusion.py --model_path ' + save_dir + ' --checkpoint_path ' + chkpth + ' --half', shell=True)
                      else:
                         subprocess.call('python /content/diffusers/scripts/convert_diffusers_to_original_stable_diffusion.py --model_path ' + save_dir + ' --checkpoint_path ' + chkpth, shell=True)
-                     if os.path.getsize(args.pretrained_model_name_or_path+"/text_encoder/pytorch_model.bin") > 670901463:
-                        subprocess.Popen('mv '+save_dir+' '+args.Session_dir,shell=True)
-                     else:
-                        subprocess.call('rm -r '+ save_dir, shell=True)
+                     subprocess.call('rm -r '+ save_dir, shell=True)
                      i=i+args.save_n_steps
             
         accelerator.wait_for_everyone()
