@@ -744,9 +744,9 @@ def main():
                         subprocess.call('cp -f '+frz_dir +'/*.* '+ save_dir+'/text_encoder', shell=True)                     
                      chkpth=args.Session_dir+"/"+inst+".ckpt"
                      if args.mixed_precision=="fp16":
-                        subprocess.call('python /content/diffusers/scripts/convert_diffusers_to_original_stable_diffusion.py --model_path ' + save_dir + ' --checkpoint_path ' + chkpth + ' --half', shell=True)
+                        subprocess.call('python /content/diffusers/scripts/convertosdv2.py ' + save_dir + ' ' + chkpth + ' --fp16', shell=True)
                      else:
-                        subprocess.call('python /content/diffusers/scripts/convert_diffusers_to_original_stable_diffusion.py --model_path ' + save_dir + ' --checkpoint_path ' + chkpth, shell=True)
+                        subprocess.call('python /content/diffusers/scripts/convertosdv2.py ' + save_dir + ' ' + chkpth, shell=True)
                      subprocess.call('rm -r '+ save_dir, shell=True)
                      i=i+args.save_n_steps
             
