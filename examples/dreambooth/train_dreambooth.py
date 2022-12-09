@@ -764,17 +764,15 @@ def main():
     if accelerator.is_main_process:
       if args.dump_only_text_encoder:
          txt_dir=args.output_dir + "/text_encoder_trained"
-         if not os.path.exists(txt_dir):
-           os.mkdir(txt_dir)
-         if args.train_only_text_encoder:
-                
+         if args.train_only_text_encoder:            
              pipeline = StableDiffusionPipeline.from_pretrained(
                  args.pretrained_model_name_or_path,
                  text_encoder=accelerator.unwrap_model(text_encoder),
              )
              pipeline.save_pretrained(args.output_dir)               
          else:
-            
+             if not os.path.exists(txt_dir):
+               os.mkdir(txt_dir)            
              pipeline = StableDiffusionPipeline.from_pretrained(
                  args.pretrained_model_name_or_path,
                  unet=accelerator.unwrap_model(unet),
