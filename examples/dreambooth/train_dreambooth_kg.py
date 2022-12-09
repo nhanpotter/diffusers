@@ -223,7 +223,7 @@ def parse_args():
         "--dump_only_text_encoder",
         action="store_true",
         default=False,        
-        help="Dump only text encoder",
+        help="Dump only text-encoder",
     )
 
     parser.add_argument(
@@ -232,6 +232,13 @@ def parse_args():
         default=False,        
         help="Train only the unet",
     )
+    
+    parser.add_argument(
+        "--train_only_text_encoder",
+        action="store_true",
+        default=False,        
+        help="Train only the text-encoder",
+    )        
     
     parser.add_argument(
         "--Resumetr",
@@ -750,7 +757,7 @@ def main():
                         subprocess.call('rm -r '+save_dir+'/text_encoder/*.*', shell=True)
                         subprocess.call('cp -f '+frz_dir +'/*.* '+ save_dir+'/text_encoder', shell=True)                     
                      chkpth=args.Session_dir+"/"+inst+".ckpt"
-                     subprocess.call('python /kaggle/working/diffusers/scripts/convert_diffusers_to_original_stable_diffusion.py --model_path ' + save_dir + ' --checkpoint_path ' + chkpth + ' --half', shell=True)
+                     subprocess.call('python /kaggle/working/diffusers/scripts/convertosdv2.py ' + save_dir + ' ' + chkpth + ' --fp16', shell=True)                     
                      subprocess.call('rm -r '+ save_dir, shell=True)                      
                      i=i+args.save_n_steps
             
@@ -760,14 +767,22 @@ def main():
     if accelerator.is_main_process:
       if args.dump_only_text_encoder:
          txt_dir=args.output_dir + "/text_encoder_trained"
-         if not os.path.exists(txt_dir):
-           os.mkdir(txt_dir)
-         pipeline = StableDiffusionPipeline.from_pretrained(
-             args.pretrained_model_name_or_path,
-             unet=accelerator.unwrap_model(unet),
-             text_encoder=accelerator.unwrap_model(text_encoder),
-         )
-         pipeline.text_encoder.save_pretrained(txt_dir)       
+         if args.train_only_text_encoder:
+
+             pipeline = StableDiffusionPipeline.from_pretrained(
+                 args.pretrained_model_name_or_path,
+                 text_encoder=accelerator.unwrap_model(text_encoder),
+             )
+             pipeline.save_pretrained(args.output_dir)               
+         else:
+             if not os.path.exists(txt_dir):
+               os.mkdir(txt_dir)            
+             pipeline = StableDiffusionPipeline.from_pretrained(
+                 args.pretrained_model_name_or_path,
+                 unet=accelerator.unwrap_model(unet),
+                 text_encoder=accelerator.unwrap_model(text_encoder),
+             )
+             pipeline.text_encoder.save_pretrained(txt_dir)          
 
       elif args.train_only_unet:
         pipeline = StableDiffusionPipeline.from_pretrained(
