@@ -238,6 +238,13 @@ def parse_args():
         action="store_true",
         default=False,        
         help="Train only the text-encoder",
+    )
+    
+    parser.add_argument(
+        "--Style",
+        action="store_true",
+        default=False,        
+        help="Further reduce overfitting",
     )    
     
     parser.add_argument(
@@ -325,7 +332,7 @@ class DreamBoothDataset(Dataset):
     def __len__(self):
         return self._length
 
-    def __getitem__(self, index):
+    def __getitem__(self, index, args=parse_args()):
         example = {}
         path = self.instance_images_path[index % self.num_instance_images]
         instance_image = Image.open(path)
@@ -341,7 +348,10 @@ class DreamBoothDataset(Dataset):
             pt=pt.replace("(","")
             pt=pt.replace(")","")
             pt=pt.replace("-","")
-            instance_prompt = pt
+            if args.Style:
+              instance_prompt = ""
+            else:
+              instance_prompt = pt
             sys.stdout.write(" [0;32m" +instance_prompt+" [0m")
             sys.stdout.flush()
 
