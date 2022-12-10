@@ -348,6 +348,7 @@ class DreamBoothDataset(Dataset):
             pt=pt.replace("(","")
             pt=pt.replace(")","")
             pt=pt.replace("-","")
+            pt=pt.replace("conceptimagedb","")
             if args.Style:
               instance_prompt = ""
             else:
