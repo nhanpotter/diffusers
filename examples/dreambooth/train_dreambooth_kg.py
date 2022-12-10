@@ -497,7 +497,7 @@ def main():
         tokenizer = CLIPTokenizer.from_pretrained(args.pretrained_model_name_or_path, subfolder="tokenizer")
 
     # Load models and create wrapper for stable diffusion
-    if args.train_only_unet:
+    if args.train_only_unet or args.dump_only_text_encoder:
       if os.path.exists(str(args.output_dir+"/text_encoder_trained")):
         text_encoder = CLIPTextModel.from_pretrained(args.output_dir, subfolder="text_encoder_trained")
       else:
