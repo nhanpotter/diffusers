@@ -374,7 +374,7 @@ class DreamBoothDataset(Dataset):
                   instance_prompt = ""
                 else:
                   instance_prompt = pt
-            sys.stdout.write(" [0;32m" +instance_prompt+" [0m")
+            sys.stdout.write(" [0;32m" +instance_prompt[:25]+" [0m")
             sys.stdout.flush()
 
 
