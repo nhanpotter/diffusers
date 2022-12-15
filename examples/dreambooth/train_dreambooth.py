@@ -254,7 +254,19 @@ def parse_args():
         help="Current session directory",
     )    
 
+    parser.add_argument(
+        "--external_captions",
+        action="store_true",
+        default=False,        
+        help="Use captions stored in a txt file",
+    )    
     
+    parser.add_argument(
+        "--captions_dir",
+        type=str,
+        default="",
+        help="The folder where captions files are stored",
+    )       
     
 
     parser.add_argument("--local_rank", type=int, default=-1, help="For distributed training: local_rank")
@@ -343,16 +355,25 @@ class DreamBoothDataset(Dataset):
         
         if self.image_captions_filename:
             filename = Path(path).stem
-            pt=''.join([i for i in filename if not i.isdigit()])
-            pt=pt.replace("_"," ")
-            pt=pt.replace("(","")
-            pt=pt.replace(")","")
-            pt=pt.replace("-","")
-            pt=pt.replace("conceptimagedb","")
-            if args.Style:
-              instance_prompt = ""
+            if args.external_captions:
+              cptpth=os.path.join(args.captions_dir, filename+'.txt')
+              if os.path.exists(cptpth):
+                with open(cptpth, "r") as f:
+                   pt=f.read()
+                instance_prompt=pt
+              else:
+                instance_prompt=""
             else:
-              instance_prompt = pt
+                pt=''.join([i for i in filename if not i.isdigit()])
+                pt=pt.replace("_"," ")
+                pt=pt.replace("(","")
+                pt=pt.replace(")","")
+                pt=pt.replace("-","")
+                pt=pt.replace("conceptimagedb","")
+                if args.Style:
+                  instance_prompt = ""
+                else:
+                  instance_prompt = pt
             sys.stdout.write(" [0;32m" +instance_prompt+" [0m")
             sys.stdout.flush()
 
