@@ -811,7 +811,6 @@ def main():
                os.mkdir(txt_dir)            
              pipeline = StableDiffusionPipeline.from_pretrained(
                  args.pretrained_model_name_or_path,
-                 unet=accelerator.unwrap_model(unet),
                  text_encoder=accelerator.unwrap_model(text_encoder),
              )
              pipeline.text_encoder.save_pretrained(txt_dir)       
@@ -820,7 +819,6 @@ def main():
         pipeline = StableDiffusionPipeline.from_pretrained(
             args.pretrained_model_name_or_path,
             unet=accelerator.unwrap_model(unet),
-            text_encoder=accelerator.unwrap_model(text_encoder),
         )
         pipeline.save_pretrained(args.output_dir)
         txt_dir=args.output_dir + "/text_encoder_trained"
