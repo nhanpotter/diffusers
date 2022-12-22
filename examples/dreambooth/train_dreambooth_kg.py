@@ -803,7 +803,8 @@ def main():
         )
         pipeline.save_pretrained(args.output_dir)
         txt_dir=args.output_dir + "/text_encoder_trained"
-        subprocess.call('rm -r '+txt_dir, shell=True)
+        if os.path.exists(txt_dir):
+          subprocess.call('rm -r '+txt_dir, shell=True)
      
       else:
         pipeline = StableDiffusionPipeline.from_pretrained(
