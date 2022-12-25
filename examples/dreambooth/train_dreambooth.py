@@ -477,8 +477,8 @@ def main():
     # Save config to file
     train_config = vars(args)
     train_config['raw_args'] = ' '.join(sys.argv[1:])
-    train_config_path = get_available_filepath(args.output_dir, "train_config.yaml")
-    with open(train_config_path, 'w') as f:
+    train_config_path = get_available_filepath(args.Session_dir, "train_config.yaml")
+    with open(train_config_path, 'w+') as f:
         yaml.dump(train_config, f, default_flow_style=False)
 
     logging_dir = Path(args.output_dir, args.logging_dir)
