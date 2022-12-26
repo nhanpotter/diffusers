@@ -476,7 +476,7 @@ def main():
         train_prefix = "unet"
     else:
         train_prefix = "text"
-    train_config_path = os.path.join(args.Session_dir, f"{args.prefix:02d}_{train_prefix}_train_config.yaml")
+    train_config_path = os.path.join(args.Session_dir, f"{args.config_prefix:02d}_{train_prefix}_train_config.yaml")
     with open(train_config_path, 'w+') as f:
         yaml.dump(train_config, f, default_flow_style=False)
 
