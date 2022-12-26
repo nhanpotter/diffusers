@@ -283,6 +283,13 @@ def parse_args():
         help="List of instance names to initialize new token embedding, separated by comma",
     )
 
+    parser.add_argument(
+        "--config_prefix",
+        type=int,
+        default=0,
+        help="Prefix for config file",
+    )
+
     parser.add_argument("--local_rank", type=int, default=-1, help="For distributed training: local_rank")
 
     args = parser.parse_args()
@@ -459,18 +466,6 @@ def init_embedding(tokenizer, text_encoder, class_name, instance_name):
         new_embedding_layer.weight[-1, :] = new_weight_params
 
 
-def get_available_filepath(root_dir, filename):
-    i = 1
-    while True:
-        new_filename = f"{i:02d}_{filename}"
-        path = os.path.join(root_dir, new_filename)
-        if os.path.exists(path):
-            i += 1
-            continue
-
-        return path
-
-
 def main():
     args = parse_args()
 
@@ -478,10 +473,10 @@ def main():
     train_config = vars(args)
     train_config['raw_args'] = ' '.join(sys.argv[1:])
     if args.train_only_unet:
-        prefix = "unet"
+        train_prefix = "unet"
     else:
-        prefix = "text"
-    train_config_path = get_available_filepath(args.Session_dir, f"{prefix}_train_config.yaml")
+        train_prefix = "text"
+    train_config_path = os.path.join(args.Session_dir, f"{args.prefix:02d}_{train_prefix}_train_config.yaml")
     with open(train_config_path, 'w+') as f:
         yaml.dump(train_config, f, default_flow_style=False)
 
