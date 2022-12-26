@@ -477,7 +477,11 @@ def main():
     # Save config to file
     train_config = vars(args)
     train_config['raw_args'] = ' '.join(sys.argv[1:])
-    train_config_path = get_available_filepath(args.Session_dir, "train_config.yaml")
+    if args.train_only_unet:
+        prefix = "unet"
+    else:
+        prefix = "text"
+    train_config_path = get_available_filepath(args.Session_dir, f"{prefix}_train_config.yaml")
     with open(train_config_path, 'w+') as f:
         yaml.dump(train_config, f, default_flow_style=False)
 
