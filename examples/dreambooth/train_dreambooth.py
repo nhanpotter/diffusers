@@ -573,8 +573,11 @@ def main():
     class_names = args.class_names.split(",")
     instance_names = args.instance_names.split(",")
     assert len(class_names) == len(instance_names)
-    for class_name, instance_name in zip(class_names, instance_names):
-        init_embedding(tokenizer, text_encoder, class_name, instance_name)
+
+    if not args.train_only_unet:
+        print("Adding special tokens to tokenizer and initializing from class embeddings")
+        for class_name, instance_name in zip(class_names, instance_names):
+            init_embedding(tokenizer, text_encoder, class_name, instance_name)
 
     vae = AutoencoderKL.from_pretrained(args.pretrained_model_name_or_path, subfolder="vae")
     unet = UNet2DConditionModel.from_pretrained(args.pretrained_model_name_or_path, subfolder="unet")
