@@ -582,6 +582,11 @@ def main():
         for class_name, instance_name in zip(class_names, instance_names):
             init_embedding(tokenizer, text_encoder, class_name, instance_name)
 
+        # Save text encoder before training
+        encoder_save_path = os.path.join(args.Session_dir, "text_encoder_before")
+        os.makedirs(encoder_save_path, exist_ok=True)
+        text_encoder.save_pretrained(encoder_save_path)
+
     vae = AutoencoderKL.from_pretrained(args.pretrained_model_name_or_path, subfolder="vae")
     unet = UNet2DConditionModel.from_pretrained(args.pretrained_model_name_or_path, subfolder="unet")
 
