@@ -290,6 +290,13 @@ def parse_args():
         help="Prefix for config file",
     )
 
+    parser.add_argument(
+        "--emb_seed",
+        type=int,
+        default=69,
+        help="Seed for embedding initialization",
+    )
+
     parser.add_argument("--local_rank", type=int, default=-1, help="For distributed training: local_rank")
 
     args = parser.parse_args()
@@ -454,16 +461,11 @@ def get_full_repo_name(model_id: str, organization: Optional[str] = None, token:
 def init_embedding(tokenizer, text_encoder, class_name, instance_name):
     print(f"Initializing embedding for class {class_name}")
     tokenizer.add_special_tokens({"additional_special_tokens": [f'{instance_name}']})
-    class_token_ids = tokenizer.convert_tokens_to_ids(tokenizer.tokenize(class_name))
-    if len(class_token_ids) != 1:
-        print(f"Warning: class {class_name} map with more than one token.")
-    class_token_id = class_token_ids[0]
     with torch.no_grad():
-        old_embedding_layer = text_encoder.resize_token_embeddings()
-        # Initialize with existing class token embedding
-        new_weight_params = old_embedding_layer.weight[class_token_id, :].detach().clone()
-        new_embedding_layer = text_encoder.resize_token_embeddings(len(tokenizer))
-        new_embedding_layer.weight[-1, :] = new_weight_params
+        # Random initialize embedding for special token
+        new_emb_layer = text_encoder.resize_token_embeddings(len(tokenizer))
+        rand_emb = torch.rand(new_emb_layer.weight.shape[1]) * 2.0 - 1.0
+        new_emb_layer.weight[-1, :] = rand_emb
 
 
 def main():
@@ -576,6 +578,7 @@ def main():
 
     if not args.train_only_unet:
         print("Adding special tokens to tokenizer and initializing from class embeddings")
+        torch.manual_seed(args.emb_seed)
         for class_name, instance_name in zip(class_names, instance_names):
             init_embedding(tokenizer, text_encoder, class_name, instance_name)
 
