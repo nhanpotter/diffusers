@@ -577,7 +577,7 @@ def main():
     assert len(class_names) == len(instance_names)
 
     if not args.train_only_unet:
-        print("Adding special tokens to tokenizer and initializing from class embeddings")
+        print("Adding special tokens to tokenizer and initializing randomly")
         torch.manual_seed(args.emb_seed)
         for class_name, instance_name in zip(class_names, instance_names):
             init_embedding(tokenizer, text_encoder, class_name, instance_name)
