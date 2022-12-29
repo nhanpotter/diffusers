@@ -571,16 +571,16 @@ def main():
     else:
       text_encoder = CLIPTextModel.from_pretrained(args.pretrained_model_name_or_path, subfolder="text_encoder")
 
-    # Add special tokens to tokenizer
-    class_names = args.class_names.split(",")
-    instance_names = args.instance_names.split(",")
-    assert len(class_names) == len(instance_names)
-
     if not args.train_only_unet:
-        print("Adding special tokens to tokenizer and initializing randomly")
-        torch.manual_seed(args.emb_seed)
-        for class_name, instance_name in zip(class_names, instance_names):
-            init_embedding(tokenizer, text_encoder, class_name, instance_name)
+        # Add special tokens to tokenizer
+        if len(args.instance_names) > 0:
+            class_names = args.class_names.split(",")
+            instance_names = args.instance_names.split(",")
+            assert len(class_names) == len(instance_names)
+            print("Adding special tokens to tokenizer and initializing randomly")
+            torch.manual_seed(args.emb_seed)
+            for class_name, instance_name in zip(class_names, instance_names):
+                init_embedding(tokenizer, text_encoder, class_name, instance_name)
 
         # Save text encoder before training
         encoder_save_path = os.path.join(args.Session_dir, "text_encoder_before")
